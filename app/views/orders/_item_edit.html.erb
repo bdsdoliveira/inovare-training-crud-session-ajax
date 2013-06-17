@@ -1,0 +1,58 @@
+
+<div class="item">
+  <h3>
+    Edit item
+    <%= link_to "×", "#", class: "remove_item_link" %>
+  </h3>
+
+  <div class="field">
+    <%= f.label :product_id %>
+    <%= f.select :product_id, Product.all.collect { |p| [ p.name, p.id ] }, { include_blank: true }, class: 'product' %>
+    <%= f.text_field :price, readonly: true %>
+
+    <%= f.label :amount %>
+    <%= f.text_field :amount %>
+  </div>
+
+  <%= f.hidden_field :_destroy, class: "delete_item", value: "false" %>
+</div>
+
+
+<script type="text/javascript">
+  $('.product').change(function(){
+    var select_tag = $(this);
+    var num = select_tag.val();
+    var num_item = select_tag.attr('id').split("_")[3];
+    if (num == 0) {
+      delete selected_products[num];
+      $("#" + select_tag.attr('id').replace("_product_id", "_price")).val("");
+    } else if (selected_products[num] != null && selected_products[num] != num_item) {
+      alert("Product already selected.");
+      $("#" + select_tag.attr('id').replace("_product_id", "_price")).val("");
+      select_tag.val(0);
+    } else {
+      selected_products[num] = num_item;
+      $.ajax({
+        data: {
+          product_id: num
+        },
+        dataType: 'json',
+        success: function(json){
+          $("#" + select_tag.attr('id').replace("_product_id", "_price")).val(json);
+        },
+        url: '<%= price_path %>'
+      });
+    }
+  });
+  $('.remove_item_link').click(function(){
+    var select_tag = $(this).parents('.item').find('.product');
+    if (num != 0) {
+      var num = select_tag.val();
+      var num_item = select_tag.attr('id').split("_")[3];
+      delete selected_products[num];
+    }
+    $(this).parents('.item').find('.delete_item').val("true");
+    $(this).parents('.item').hide();
+    return false;
+  });
+</script>

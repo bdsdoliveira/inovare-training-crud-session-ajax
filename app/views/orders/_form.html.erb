@@ -1,0 +1,47 @@
+<%= form_for(@order) do |f| %>
+  <% if @order.errors.any? %>
+    <div id="error_explanation" class="alert alert-error">
+      <h2><%= pluralize(@order.errors.count, "error") %> prohibited this order from being saved:</h2>
+      <ul>
+      <% @order.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= link_to "Add item", item_new_path, id: "new_item_link" %>
+
+  <div id="items">
+    <%= f.fields_for :items do |ff| %>
+      <%= render "item_edit", f: ff %>
+    <% end %>
+  </div>
+
+  <br />
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  var selected_products = {};
+  $('#new_item_link').click(function(){
+    $.ajax({
+      url: $(this).attr('href'),
+      dataType: "html",
+      data: "counter=" + new Date().getTime(),
+      success: function(html) {
+        $('#items').append(html);
+      }
+    });
+    return false;
+  });
+  $('.product').each(function(){
+    select_tag = $(this);
+    var num = select_tag.val();
+    var num_item = select_tag.attr('id').split("_")[3];
+    selected_products[num] = num_item;
+  });
+</script>
