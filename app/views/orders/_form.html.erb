@@ -70,7 +70,6 @@
         url: '<%= price_path %>'
       });
     }
-    console.log(selected_products);
   });
   $('#items').on('click', '.remove_item_new_link', function(){
     var select_tag = $(this).parents('.item').find('.product');
@@ -80,7 +79,6 @@
       delete selected_products[num];
     }
     $(this).parents('.item').remove();
-    console.log(selected_products);
     return false;
   });
   $('#items').on('click', '.remove_item_edit_link', function(){
@@ -92,7 +90,6 @@
     }
     $(this).parents('.item').find('.delete_item').val("true");
     $(this).parents('.item').hide();
-    console.log(selected_products);
     return false;
   });
 </script>
