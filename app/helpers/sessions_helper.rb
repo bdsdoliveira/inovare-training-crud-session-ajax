@@ -1,6 +1,6 @@
 module SessionsHelper
   def sign_in(user)
-    cookies.permanent[:remember_token] = user.remember_token
+    cookies[:remember_token] = { value: user.remember_token, expires: 2.weeks.from_now.utc }
     self.current_user = user
   end
 
