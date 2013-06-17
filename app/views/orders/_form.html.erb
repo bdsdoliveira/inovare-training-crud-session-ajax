@@ -27,6 +27,12 @@
 
 <script type="text/javascript">
   var selected_products = {};
+  $('.product').each(function(){
+    select_tag = $(this);
+    var num = select_tag.val();
+    var num_item = select_tag.attr('id').split("_")[3];
+    selected_products[num] = num_item;
+  });
   $('#new_item_link').click(function(){
     $.ajax({
       url: $(this).attr('href'),
@@ -38,10 +44,55 @@
     });
     return false;
   });
-  $('.product').each(function(){
-    select_tag = $(this);
+  $('#items').on('change', '.product', function(){
+    var select_tag = $(this);
     var num = select_tag.val();
     var num_item = select_tag.attr('id').split("_")[3];
-    selected_products[num] = num_item;
+    for (product in selected_products) {
+      if (selected_products[product] == num_item) delete selected_products[product];
+    }
+    if (num == 0) {
+      $("#" + select_tag.attr('id').replace("_product_id", "_price")).val("");
+    } else if (selected_products[num] != null && selected_products[num] != num_item) {
+      alert("Product already selected.");
+      $("#" + select_tag.attr('id').replace("_product_id", "_price")).val("");
+      select_tag.val(0);
+    } else {
+      selected_products[num] = num_item;
+      $.ajax({
+        data: {
+          product_id: num
+        },
+        dataType: 'json',
+        success: function(json){
+          $("#" + select_tag.attr('id').replace("_product_id", "_price")).val(json);
+        },
+        url: '<%= price_path %>'
+      });
+    }
+    console.log(selected_products);
+  });
+  $('#items').on('click', '.remove_item_new_link', function(){
+    var select_tag = $(this).parents('.item').find('.product');
+    if (num != 0) {
+      var num = select_tag.val();
+      var num_item = select_tag.attr('id').split("_")[3];
+      delete selected_products[num];
+    }
+    $(this).parents('.item').remove();
+    console.log(selected_products);
+    return false;
+  });
+  $('#items').on('click', '.remove_item_edit_link', function(){
+    var select_tag = $(this).parents('.item').find('.product');
+    if (num != 0) {
+      var num = select_tag.val();
+      var num_item = select_tag.attr('id').split("_")[3];
+      delete selected_products[num];
+    }
+    $(this).parents('.item').find('.delete_item').val("true");
+    $(this).parents('.item').hide();
+    console.log(selected_products);
+    return false;
   });
 </script>
